@@ -35,7 +35,7 @@
 .registerButton {
   margin-top: 20px;
   cursor: pointer;
-  background-color: teal;
+  background-color: rgb(94, 189, 153);
   border: none;
   color: white;
   border-radius: 10px;
