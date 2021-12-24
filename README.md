@@ -13,8 +13,13 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-### Main Page
-  <img width="1500" src="https://user-images.githubusercontent.com/67185854/147308797-09dae485-59fb-4c53-9c81-61dd27c1555b.png">
+### Main Page (Logout)
+  <img width="1500" src="https://user-images.githubusercontent.com/67185854/147308797-09dae485-59fb-4c53-9c81-61dd27c1555b.png"/>
+  
+ ### Main Page (Login)
+
+  <img width="1500" alt="Screen Shot 2021-12-23 at 19 30 32" src="https://user-images.githubusercontent.com/67185854/147312756-51ef8756-67b0-454a-84b7-d8bd479cc5c8.png">
+
    <p align="right">(<a href="#top">back to top</a>)</p>
   
 ### Register Page
