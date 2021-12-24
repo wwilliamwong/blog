@@ -14,11 +14,11 @@
 ## About The Project
 
 ### Main Page (Logout)
-  <img width="1500" src="https://user-images.githubusercontent.com/67185854/147308797-09dae485-59fb-4c53-9c81-61dd27c1555b.png"/>
+  <img width="1000" src="https://user-images.githubusercontent.com/67185854/147308797-09dae485-59fb-4c53-9c81-61dd27c1555b.png"/>
   
  ### Main Page (Login)
 
-  <img width="1500" alt="Screen Shot 2021-12-23 at 19 30 32" src="https://user-images.githubusercontent.com/67185854/147312756-51ef8756-67b0-454a-84b7-d8bd479cc5c8.png">
+  <img width="1000" src="https://user-images.githubusercontent.com/67185854/147312756-51ef8756-67b0-454a-84b7-d8bd479cc5c8.png">
 
    <p align="right">(<a href="#top">back to top</a>)</p>
   
@@ -30,4 +30,10 @@
 ### Login Page
 
   <img width="1000" src="https://user-images.githubusercontent.com/67185854/147308533-625b8562-8228-40d8-ba0b-c47638b19d26.png">
+  <p align="right">(<a href="#top">back to top</a>)</p>
+  
+### Write
+
+  <img width="1000" src="https://user-images.githubusercontent.com/67185854/147312972-baf42a74-9b99-457e-8f93-3dd396c9f65e.png">
+
   <p align="right">(<a href="#top">back to top</a>)</p>
