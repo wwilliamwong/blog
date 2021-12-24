@@ -14,8 +14,7 @@
 ## About The Project
 
 ### Main Page
-  
-   <img src="https://user-images.githubusercontent.com/67185854/147307745-f7920585-f21b-4dba-b295-615bdbadcbb9.png"  width="1000" />
+  <img width="1500" src="https://user-images.githubusercontent.com/67185854/147308797-09dae485-59fb-4c53-9c81-61dd27c1555b.png">
    <p align="right">(<a href="#top">back to top</a>)</p>
   
 ### Register Page
