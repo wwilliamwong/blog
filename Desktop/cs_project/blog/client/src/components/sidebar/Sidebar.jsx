@@ -5,8 +5,8 @@ export default function Sidebar() {
         <div className="sidebar">
             <div className="sidebarItem">
                     <span className="sidebarTitle">ABOUT ME</span>
-                    <img src="https://i.pinimg.com/236x/1e/3f/58/1e3f587572a7a7b20bbf1828595a1786--holiday-party-themes-holiday-gift-guide.jpg" alt="" />
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur eius, numquam nobis quisquam tempora in ea obcaecati autem facere quaerat officiis sunt id quae consequuntur, quibusdam facilis dolores porro vitae!</p>
+                    <img src="https://images.pexels.com/photos/2299028/pexels-photo-2299028.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=200" alt="" />
+                    <p>Hello, I am William.</p>
                 <div className="sidebarItem">
                     <span className="sidebarTitle">CATRGORIES</span>
                     <ul className="sidebarList">
