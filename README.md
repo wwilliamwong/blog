@@ -1,4 +1,4 @@
-  <h3 align="center">Be A Blogger</h3>
+  <h3 align="center">EveryDayBlogger</h3>
 
   <p align="center">
     A fullstack social media application
