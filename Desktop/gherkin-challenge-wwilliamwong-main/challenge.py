@@ -11,20 +11,24 @@ import pygame
 class Robot:
     JOINT_LIMITS = [-6.28, 6.28]
     MAX_VELOCITY = 15
-    MAX_ACCELERATION = 50
+    MAX_ACCELERATION = 1000
     DT = 0.033
 
     link_1: float = 75.  # pixels
     link_2: float = 50.  # pixels
+    link_3: float = 25.  # pixels
     _theta_0: float      # radians
     _theta_1: float      # radians
+    _theta_2: float      # radians
 
     def __init__(self) -> None:
         # internal variables
         self.all_theta_0: List[float] = []
         self.all_theta_1: List[float] = []
+        self.all_theta_2: List[float] = []
 
         self.theta_0 = 0.
+        self.theta_1 = 0.
         self.theta_1 = 0.
 
     # Getters/Setters
@@ -59,6 +63,21 @@ class Robot:
         assert self.max_acceleration(self.all_theta_1) < self.MAX_ACCELERATION, \
             f'Joint 1 Accel {self.max_acceleration(self.all_theta_1)} exceeds acceleration limit'
 
+    @property
+    def theta_2(self) -> float:
+        return self._theta_2
+
+    @theta_2.setter
+    def theta_2(self, value: float) -> None:
+        self.all_theta_2.append(value)
+        self._theta_2 = value
+        assert self.check_angle_limits(value), \
+            f'Joint 2 value {value} exceeds joint limits'
+        assert self.max_velocity(self.all_theta_2) < self.MAX_VELOCITY, \
+            f'Joint 2 Velocity {self.max_velocity(self.all_theta_2)} exceeds velocity limit'
+        assert self.max_acceleration(self.all_theta_2) < self.MAX_ACCELERATION, \
+            f'Joint 2 Accel {self.max_acceleration(self.all_theta_2)} exceeds acceleration limit'
+
     # Kinematics
     def joint_1_pos(self) -> Tuple[float, float]:
         """
@@ -72,28 +91,37 @@ class Robot:
         """
         return self.forward(self.theta_0, self.theta_1)
 
+    def joint_3_pos(self) -> Tuple[float, float]:
+        """
+        Compute the x, y position of joint 3
+        """
+        return self.forward(self.theta_1, self.theta_2)
+
     @classmethod
-    def forward(cls, theta_0: float, theta_1: float) -> Tuple[float, float]:
+    def forward(cls, theta_0: float, theta_1: float, theta_2:float) -> Tuple[float, float, float]:
         """
         Compute the x, y position of the end of the links from the joint angles
         """
-        x = cls.link_1 * np.cos(theta_0) + cls.link_2 * np.cos(theta_0 + theta_1)
-        y = cls.link_1 * np.sin(theta_0) + cls.link_2 * np.sin(theta_0 + theta_1)
+        x = cls.link_1 * np.cos(theta_0) + cls.link_2 * np.cos(theta_0 + theta_1 + theta_2)
+        y = cls.link_1 * np.sin(theta_0) + cls.link_2 * np.sin(theta_0 + theta_1 + theta_2)
+        z = cls.link_1 * np.tan(theta_0) + cls.link_2 * np.tan(theta_0 + theta_1 + theta_2)
 
         return x, y
 
     @classmethod
-    def inverse(cls, x: float, y: float) -> Tuple[float, float]:
+    def inverse(cls, x: float, y: float) -> Tuple[float, float, float]:
         """
         Compute the joint angles from the position of the end of the links
         """
+        theta_2 = np.arccos((x ** 2 + y ** 2 - cls.link_1 ** 2 - cls.link_2 ** 2)
+                            / (2 * cls.link_1 * cls.link_2))
         theta_1 = np.arccos((x ** 2 + y ** 2 - cls.link_1 ** 2 - cls.link_2 ** 2)
                             / (2 * cls.link_1 * cls.link_2))
         theta_0 = np.arctan2(y, x) - \
             np.arctan((cls.link_2 * np.sin(theta_1)) /
                       (cls.link_1 + cls.link_2 * np.cos(theta_1)))
 
-        return theta_0, theta_1
+        return theta_0, theta_1, theta_2
 
     @classmethod
     def check_angle_limits(cls, theta: float) -> bool:
@@ -121,8 +149,8 @@ class World:
         self,
         width: int,
         height: int,
-        robot_origin: Tuple[int, int],
-        goal: Tuple[int, int]
+        robot_origin: Tuple[int, int, int],
+        goal: Tuple[int, int, int]
     ) -> None:
         self.width = width
         self.height = height
@@ -130,14 +158,14 @@ class World:
         self.goal = goal
 
     def convert_to_display(
-            self, point: Tuple[Union[int, float], Union[int, float]]) -> Tuple[int, int]:
+            self, point: Tuple[Union[int, float], Union[int, float], Union[int, float]]) -> Tuple[int, int, int]:
         """
         Convert a point from the robot coordinate system to the display coordinate system
         """
-        robot_x, robot_y = point
-        offset_x, offset_y = self.robot_origin
+        robot_x, robot_y, robot_z = point
+        offset_x, offset_y, offset_z = self.robot_origin
 
-        return int(offset_x + robot_x), int(offset_y - robot_y)
+        return int(offset_x + robot_x), int(offset_y - robot_y), int(offset_z - robot_z)
 
 
 class Visualizer:
@@ -163,6 +191,7 @@ class Visualizer:
         """
         goal = self.world.convert_to_display(self.world.goal)
         pygame.draw.circle(self.screen, self.RED, goal, 6)
+        # Draw border
         for x in range(0, self.world.width + 10, 10):
             pygame.draw.rect(self.screen, self.BLACK, [0, x, 10, 10])
             pygame.draw.rect(self.screen, self.BLACK, [self.world.width + 10, x, 10, 10])
@@ -176,6 +205,8 @@ class Visualizer:
         j0 = self.world.robot_origin
         j1 = self.world.convert_to_display(robot.joint_1_pos())
         j2 = self.world.convert_to_display(robot.joint_2_pos())
+        j3 = self.world.convert_to_display(robot.joint_3_pos())
+
         # Draw joint 0
         pygame.draw.circle(self.screen, self.BLACK, j0, 4)
         # Draw link 1
@@ -186,6 +217,10 @@ class Visualizer:
         pygame.draw.line(self.screen, self.BLACK, j1, j2, 2)
         # Draw joint 2
         pygame.draw.circle(self.screen, self.BLACK, j2, 4)
+        # Draw link 3
+        pygame.draw.line(self.screen, self.BLACK, j2, j3, 2)
+        # Draw joint 3
+        pygame.draw.circle(self.screen, self.BLACK, j3, 4)
 
     def update_display(self, robot: Robot, success: bool) -> bool:
         for event in pygame.event.get():
@@ -217,9 +252,9 @@ class Visualizer:
 
 
 class Controller:
-    def __init__(self, goal: Tuple[int, int]) -> None:
+    def __init__(self, goal: Tuple[int, int, int]) -> None:
         self.goal = goal
-        self.goal_theta_0, self.goal_theta_1 = Robot.inverse(self.goal[0], self.goal[1])
+        self.goal_theta_0, self.goal_theta_1 = Robot.inverse(self.goal[0], self.goal[1], self.goal[2])
 
     def step(self, robot: Robot) -> Robot:
         """
@@ -227,9 +262,11 @@ class Controller:
         """
         theta_0_error = self.goal_theta_0 - robot.theta_0
         theta_1_error = self.goal_theta_1 - robot.theta_1
+        theta_2_error = self.goal_theta_2 - robot.theta_2
 
         robot.theta_0 += theta_0_error / 10
         robot.theta_1 += theta_1_error / 10
+        robot.theta_2 += theta_2_error / 10
 
         return robot
 
@@ -267,7 +304,7 @@ class Runner:
             time.sleep(self.robot.DT)
 
     @staticmethod
-    def check_success(robot: Robot, goal: Tuple[int, int]) -> bool:
+    def check_success(robot: Robot, goal: Tuple[int, int, int]) -> bool:
         """
         Check that robot's joint 2 is very close to the goal.
         Don't not use exact comparision, to be robust to floating point calculations.
@@ -278,7 +315,7 @@ class Runner:
         self.vis.cleanup()
 
 
-def generate_random_goal(min_radius: float, max_radius: float) -> Tuple[int, int]:
+def generate_random_goal(min_radius: float, max_radius: float) -> Tuple[int, int, int]:
     """
     Generate a random goal that is reachable by the robot arm
     """
@@ -289,8 +326,9 @@ def generate_random_goal(min_radius: float, max_radius: float) -> Tuple[int, int
 
     x = int(r * np.cos(theta))
     y = int(r * np.sin(theta))
+    z = int(r * np.tan(theta))
 
-    return x, y
+    return x, y, z
 
 
 def main() -> None:
