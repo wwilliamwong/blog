@@ -206,7 +206,7 @@ class Visualizer:
 
         if success:
             text = self.font.render('Success!', True, self.BLACK)
-            self.screen.blit(text, (1, 1))
+            self.screen.blit(text, (10, 10))
 
         pygame.display.flip()
 
