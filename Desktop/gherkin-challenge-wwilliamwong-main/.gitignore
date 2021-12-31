@@ -1,8 +1,0 @@
-*~
-
-env/
-
-# Temporary Directories
-.mypy_cache/
-__pycache__
-.mypy_cache/
